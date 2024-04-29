@@ -1,6 +1,7 @@
-fn main() {
-    print!("Advinhe um numero");
-    print!("Digite o seu palpite.");
+mod utils;
 
-    let mut palpite = String::new();
+use utils::controller as ctrl;
+
+fn main() {
+ ctrl::nav_main_menu();
 }
