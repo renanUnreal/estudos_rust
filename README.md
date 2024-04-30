@@ -13,3 +13,8 @@ crates.io
 para criar REGEX 
 
 rublar.com
+
+###
+Dependencia para manipular o terminal
+
+crossterm = "0.27.0"
