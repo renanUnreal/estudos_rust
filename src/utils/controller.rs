@@ -60,7 +60,7 @@ fn form_cliente(){
      cpf : regex_form(r"^\d{11}$", "CPF"),
      civel : regex_form(r"^[A-Za-z\s]+$", "Estado Civil"),
      cep : regex_form(r"^\d{8}$", "CEP"),
-     data_nascimento : regex_form(r"^\d{2}-\d{2}-\d{4}$", "Data nascimento"),
+     data_nascimento : regex_form(r"^\d{2}-\/\d{2}-\/\d{4}$", "Data nascimento"),
     };
 
     impl fmt::Display for Pessoa {
