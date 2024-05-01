@@ -45,7 +45,7 @@ fn regex_form(padrao: &str, label : &str) -> String {
 fn form_cliente(){
     ui::cadastrar_cliente();
 
-    struct Pessoa {
+    struct Cliente {
         id: String,
         nome_completo: String,
         cpf: String,
@@ -54,16 +54,17 @@ fn form_cliente(){
         data_nascimento: String,
     }
 
-    let pessoa: Pessoa = Pessoa{
-    id: regex_form(r"\d{4}", "ID"),
+    let cliente: Cliente = Cliente{
+    
+    id: regex_form(r"\d{4}", "ID (Min 4 digitos)"),
     nome_completo : regex_form(r"^[A-Za-z\s]+$", "Nome Completo"),
-     cpf : regex_form(r"^\d{11}$", "CPF"),
+     cpf : regex_form(r"^\d{11}$", "CPF (11 digitos)"),
      civel : regex_form(r"^[A-Za-z\s]+$", "Estado Civil"),
-     cep : regex_form(r"^\d{8}$", "CEP"),
-     data_nascimento : regex_form(r"^\d{2}-\/\d{2}-\/\d{4}$", "Data nascimento"),
+     cep : regex_form(r"^\d{8}$", "CEP (8 digitos)"),
+     data_nascimento : regex_form(r"^\d{2}-\/\d{2}-\/\d{4}$", "Data nascimento dd/mm/yyyy"),
     };
 
-    impl fmt::Display for Pessoa {
+    impl fmt::Display for Cliente {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             write!(f, "ID: {}\nNome Completo: {}\nCPF: {}\nEstado Civil: {}\nCEP: {}\nData de Nascimento: {}",
                    self.id, self.nome_completo, self.cpf, self.civel, self.cep, self.data_nascimento)
@@ -71,7 +72,7 @@ fn form_cliente(){
     }
     ui::clear_screen();
     println!("Cliente cadastrado: \n");
-    println!("{}",pessoa);
+    println!("{}",cliente);
     println!("\n\n#####################################");
 
 }
