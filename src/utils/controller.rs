@@ -58,10 +58,10 @@ fn form_cliente(){
     
     id: regex_form(r"\d{4}", "ID (Min 4 digitos)"),
     nome_completo : regex_form(r"^[A-Za-z\s]+$", "Nome Completo"),
-     cpf : regex_form(r"^\d{11}$", "CPF (11 digitos)"),
+     cpf : regex_form(r"^\d{11}", "CPF (11 digitos)"),
      civel : regex_form(r"^[A-Za-z\s]+$", "Estado Civil"),
-     cep : regex_form(r"^\d{8}$", "CEP (8 digitos)"),
-     data_nascimento : regex_form(r"^\d{2}-\/\d{2}-\/\d{4}$", "Data nascimento dd/mm/yyyy"),
+     cep : regex_form(r"^\d{8}", "CEP (8 digitos)"),
+     data_nascimento : regex_form(r"\d{2}\/\d{2}\/\d{4}", "Data nascimento dd/mm/yyyy"),
     };
 
     impl fmt::Display for Cliente {
