@@ -18,3 +18,4 @@ para criar REGEX
 Dependencia para manipular o terminal
 
 crossterm = "0.27.0"
+regex = "1.10.4"
