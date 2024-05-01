@@ -1,3 +1,6 @@
+use regex::Regex;
+use std::fmt;
+
 use super::interface as ui;
 use std::io::{self, Write};
 
@@ -16,73 +19,62 @@ fn tratar_input() -> char {
     };
     opc
 }
+fn regex_form(padrao: &str, label : &str) -> String {
+    print!("{}: ", label);
+    io::stdout().flush().unwrap();
+    let mut input = String::new();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Erro ao ler a entrada");
+
+    // Define a expressão regular com o padrão fornecido
+    let re = Regex::new(padrao).unwrap();
+
+    // Aplica a expressão regular na entrada
+    if let Some(mat) = re.find(&input) {
+        // Se a expressão regular encontrar uma correspondência na entrada
+        // Retorna a parte correspondente da entrada
+        mat.as_str().to_string()
+    } else {
+        println!("Erro ao validar dados");
+        // Se não houver correspondência, retorna uma string vazia
+        String::new()
+    }
+}
 
 fn form_cliente(){
     ui::cadastrar_cliente();
- 
-    println!("Por favor, preencha as informações da pessoa:");
 
-    // Solicitação das informações ao usuário
-    print!("ID: ");
-    io::stdout().flush().unwrap();
-    let mut id_input = String::new();
-    io::stdin()
-        .read_line(&mut id_input)
-        .expect("Erro ao ler a entrada");
-    
+    struct Pessoa {
+        id: String,
+        nome_completo: String,
+        cpf: String,
+        civel: String,
+        cep: String,
+        data_nascimento: String,
+    }
 
-    print!("CPF: ");
-    io::stdout().flush().unwrap();
-    let mut cpf = String::new();
-    io::stdin()
-        .read_line(&mut cpf)
-        .expect("Erro ao ler a entrada");
+    let pessoa: Pessoa = Pessoa{
+    id: regex_form(r"\d{4}", "ID"),
+    nome_completo : regex_form(r"^[A-Za-z\s]+$", "Nome Completo"),
+     cpf : regex_form(r"^\d{11}$", "CPF"),
+     civel : regex_form(r"^[A-Za-z\s]+$", "Estado Civil"),
+     cep : regex_form(r"^\d{8}$", "CEP"),
+     data_nascimento : regex_form(r"^\d{2}-\d{2}-\d{4}$", "Data nascimento"),
+    };
 
-    print!("Nome: ");
-    io::stdout().flush().unwrap();
-    let mut nome = String::new();
-    io::stdin()
-        .read_line(&mut nome)
-        .expect("Erro ao ler a entrada");
+    impl fmt::Display for Pessoa {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "ID: {}\nNome Completo: {}\nCPF: {}\nEstado Civil: {}\nCEP: {}\nData de Nascimento: {}",
+                   self.id, self.nome_completo, self.cpf, self.civel, self.cep, self.data_nascimento)
+        }
+    }
+    ui::clear_screen();
+    println!("Cliente cadastrado: \n");
+    println!("{}",pessoa);
+    println!("\n\n#####################################");
 
-    print!("Sobrenome: ");
-    io::stdout().flush().unwrap();
-    let mut sobrenome = String::new();
-    io::stdin()
-        .read_line(&mut sobrenome)
-        .expect("Erro ao ler a entrada");
-
-    print!("Data de nascimento (formato YYYY-MM-DD): ");
-    io::stdout().flush().unwrap();
-    let mut data_nascimento_str = String::new();
-    io::stdin()
-        .read_line(&mut data_nascimento_str)
-        .expect("Erro ao ler a entrada");
-
-    print!("CEP: ");
-    io::stdout().flush().unwrap();
-    let mut cep = String::new();
-    io::stdin()
-        .read_line(&mut cep)
-        .expect("Erro ao ler a entrada");
-
-    print!("Telefone: ");
-    io::stdout().flush().unwrap();
-    let mut telefone = String::new();
-    io::stdin()
-        .read_line(&mut telefone)
-        .expect("Erro ao ler a entrada");
-
-    print!("Estado civil: ");
-    io::stdout().flush().unwrap();
-    let mut estado_civil = String::new();
-    io::stdin()
-        .read_line(&mut estado_civil)
-        .expect("Erro ao ler a entrada");
-
-    println!("\n\nCliente de cpf {} cadastrado com sucesso", cpf);
 }
-
 pub fn nav_main_menu() {
     ui::main_menu();
     print!("Aguardando...\n");

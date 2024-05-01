@@ -12,7 +12,7 @@ crates.io
 ###
 para criar REGEX 
 
-rublar.com
+[rublar.com](https://rubular.com/)
 
 ###
 Dependencia para manipular o terminal

@@ -1,7 +1,7 @@
 use std::io::{stdout, Write};
 use crossterm::{execute, terminal};
 
-fn clear_screen(){
+pub fn clear_screen(){
     let mut stdout = stdout();
     execute!(stdout, terminal::Clear(terminal::ClearType::All)).unwrap();
     stdout.flush().unwrap();
