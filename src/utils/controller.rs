@@ -1,5 +1,6 @@
 use regex::Regex;
 use std::fmt;
+use chrono::{Local, Datelike};
 
 use super::interface as ui;
 use std::io::{self, Write};
@@ -63,7 +64,7 @@ fn form_cliente(){
      cep : regex_form(r"^\d{8}", "CEP (8 digitos)"),
      data_nascimento : regex_form(r"\d{2}\/\d{2}\/\d{4}", "Data nascimento dd/mm/yyyy"),
     };
-
+    
     impl fmt::Display for Cliente {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             write!(f, "ID: {}\nNome Completo: {}\nCPF: {}\nEstado Civil: {}\nCEP: {}\nData de Nascimento: {}",
@@ -71,9 +72,18 @@ fn form_cliente(){
         }
     }
     ui::clear_screen();
-    println!("Cliente cadastrado: \n");
-    println!("{}",cliente);
-    println!("\n\n#####################################");
+    if get_data(&cliente.data_nascimento){
+        println!("Cliente de maior");
+        println!("Cliente cadastrado: \n");
+        println!("{}",cliente);
+        println!("\n\n#####################################");
+    }
+    else{
+        println!("Lamento precisa ter mais de 18 anos para se cadastrar");
+    }
+
+
+    
 
 }
 pub fn nav_main_menu() {
@@ -100,4 +110,52 @@ pub fn nav_main_menu() {
             }
         }
     }
+    
+}
+pub fn get_data(_data: &str) -> bool {
+    // Função para converter a string de data em um array de u32
+    fn parse_date(date_str: &str) -> Option<[u32; 3]> {
+        let parts: Vec<&str> = date_str.split('/').collect();
+        if parts.len() != 3 {
+            return None;
+        }
+        let day: u32 = parts[0].parse().ok()?;
+        let month: u32 = parts[1].parse().ok()?;
+        let year: u32 = parts[2].parse().ok()?;
+        Some([day, month, year])
+    }
+
+    // Obter o ano atual como u32
+    let current_year = Local::now().year() as u32;
+
+    // Converter a string de data fornecida pelo usuário em um array de u32
+    if let Some(data_user) = parse_date(_data) {
+        // Verificar se a diferença entre os anos é maior que 18
+        if (current_year - data_user[2]) > 18 {
+            println!("é maior");
+            true
+        } else {
+            false
+        }
+    } else {
+        // Se a string de data fornecida pelo usuário for inválida, retornar false
+        false
+    }
+}
+
+fn parse_date(date_str: &str) -> Option<[u32; 3]> {
+    // Divide a string da data em substrings usando "/"
+    let parts: Vec<&str> = date_str.split('/').collect();
+
+    // Verifica se há exatamente 3 partes na data
+    if parts.len() != 3 {
+        return None;
+    }
+
+    // Tenta converter as partes em números inteiros
+    let day: u32 = parts[0].parse().ok()?;
+    let month: u32 = parts[1].parse().ok()?;
+    let year: u32 = parts[2].parse().ok()?;
+
+    Some([day, month, year])
 }
