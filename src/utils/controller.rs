@@ -125,15 +125,24 @@ pub fn get_data(_data: &str) -> bool {
         Some([day, month, year])
     }
 
-    // Obter o ano atual como u32
-    let current_year = Local::now().year() as u32;
+    // Obter a data atual
+    let now = Local::now();
+    let current_year = now.year() as u32;
+    let current_month = now.month();
+    let current_day = now.day();
 
     // Converter a string de data fornecida pelo usuário em um array de u32
     if let Some(data_user) = parse_date(_data) {
         // Verificar se a diferença entre os anos é maior que 18
         if (current_year - data_user[2]) > 18 {
-            println!("é maior");
             true
+        } else if (current_year - data_user[2]) == 18 {
+            // Se a diferença for exatamente 18 anos, verificar os meses e dias
+            if current_month > data_user[1] || (current_month == data_user[1] && current_day >= data_user[0]) {
+                true
+            } else {
+                false
+            }
         } else {
             false
         }
@@ -141,21 +150,4 @@ pub fn get_data(_data: &str) -> bool {
         // Se a string de data fornecida pelo usuário for inválida, retornar false
         false
     }
-}
-
-fn parse_date(date_str: &str) -> Option<[u32; 3]> {
-    // Divide a string da data em substrings usando "/"
-    let parts: Vec<&str> = date_str.split('/').collect();
-
-    // Verifica se há exatamente 3 partes na data
-    if parts.len() != 3 {
-        return None;
-    }
-
-    // Tenta converter as partes em números inteiros
-    let day: u32 = parts[0].parse().ok()?;
-    let month: u32 = parts[1].parse().ok()?;
-    let year: u32 = parts[2].parse().ok()?;
-
-    Some([day, month, year])
 }
