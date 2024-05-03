@@ -4,6 +4,7 @@ use chrono::{Local, Datelike};
 
 use super::interface as ui;
 use std::io::{self, Write};
+use super::cliente_model;
 
 fn tratar_input() -> char {
     let mut input: String = String::new();
@@ -46,16 +47,9 @@ fn regex_form(padrao: &str, label : &str) -> String {
 fn form_cliente(){
     ui::cadastrar_cliente();
 
-    struct Cliente {
-        id: String,
-        nome_completo: String,
-        cpf: String,
-        civel: String,
-        cep: String,
-        data_nascimento: String,
-    }
 
-    let cliente: Cliente = Cliente{
+
+    let cliente: cliente_model::Cliente = cliente_model::Cliente{
     
     id: regex_form(r"\d{4}", "ID (Min 4 digitos)"),
     nome_completo : regex_form(r"^[A-Za-z\s]+$", "Nome Completo"),
@@ -65,7 +59,7 @@ fn form_cliente(){
      data_nascimento : regex_form(r"\d{2}\/\d{2}\/\d{4}", "Data nascimento dd/mm/yyyy"),
     };
     
-    impl fmt::Display for Cliente {
+    impl fmt::Display for cliente_model::Cliente {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             write!(f, "ID: {}\nNome Completo: {}\nCPF: {}\nEstado Civil: {}\nCEP: {}\nData de Nascimento: {}",
                    self.id, self.nome_completo, self.cpf, self.civel, self.cep, self.data_nascimento)
