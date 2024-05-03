@@ -1,10 +1,20 @@
 use regex::Regex;
 use std::fmt;
 use chrono::{Local, Datelike};
+use std::io::{self, Write};
 
 use super::interface as ui;
-use std::io::{self, Write};
 use super::cliente_model;
+
+type ClienteList =  Vec<cliente_model::Cliente>;
+static mut LISTA_CLIENTES: Option<ClienteList> = None;
+
+// Inicializa a variável global LISTA_CLIENTES
+fn initialize_global() {
+    unsafe {
+        LISTA_CLIENTES = Some(Vec::new());
+    }
+}
 
 fn tratar_input() -> char {
     let mut input: String = String::new();
@@ -21,7 +31,8 @@ fn tratar_input() -> char {
     };
     opc
 }
-fn regex_form(padrao: &str, label : &str) -> String {
+
+fn regex_form(padrao: &str, label: &str) -> String {
     print!("{}: ", label);
     io::stdout().flush().unwrap();
     let mut input = String::new();
@@ -29,63 +40,90 @@ fn regex_form(padrao: &str, label : &str) -> String {
         .read_line(&mut input)
         .expect("Erro ao ler a entrada");
 
-    // Define a expressão regular com o padrão fornecido
     let re = Regex::new(padrao).unwrap();
 
-    // Aplica a expressão regular na entrada
     if let Some(mat) = re.find(&input) {
-        // Se a expressão regular encontrar uma correspondência na entrada
-        // Retorna a parte correspondente da entrada
         mat.as_str().to_string()
     } else {
         println!("Erro ao validar dados");
-        // Se não houver correspondência, retorna uma string vazia
         String::new()
     }
 }
 
-fn form_cliente(){
-    ui::cadastrar_cliente();
+fn register_users() {
+    println!("Quantos Clientes você deseja cadastrar? max: 9 \n");
+    let input: char = tratar_input();
+    initialize_global();
 
+    if let Some(digit) = input.to_digit(10) {
+        let num: i8 = digit as i8;
 
-
-    let cliente: cliente_model::Cliente = cliente_model::Cliente{
-    
-    id: regex_form(r"\d{4}", "ID (Min 4 digitos)"),
-    nome_completo : regex_form(r"^[A-Za-z\s]+$", "Nome Completo"),
-     cpf : regex_form(r"^\d{11}", "CPF (11 digitos)"),
-     civel : regex_form(r"^[A-Za-z\s]+$", "Estado Civil"),
-     cep : regex_form(r"^\d{8}", "CEP (8 digitos)"),
-     data_nascimento : regex_form(r"\d{2}\/\d{2}\/\d{4}", "Data nascimento dd/mm/yyyy"),
-    };
-    
-    impl fmt::Display for cliente_model::Cliente {
-        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            write!(f, "ID: {}\nNome Completo: {}\nCPF: {}\nEstado Civil: {}\nCEP: {}\nData de Nascimento: {}",
-                   self.id, self.nome_completo, self.cpf, self.civel, self.cep, self.data_nascimento)
+        for cliente_num in 1..=num {
+          unsafe {
+            if let Some(ref mut lista_clientes) = LISTA_CLIENTES {
+                if let Some(cliente) = form_cliente() {
+                    lista_clientes.push(cliente);
+                } else {
+                    println!("Falha ao cadastrar o cliente número {}", cliente_num);
+                }
+            }
+        }
+        println!("#####################################################################");
+        list_clientes();
+        }
+    } else {
+        println!("O caractere '{}' não é um dígito válido.", input);
+    }
+}
+fn list_clientes() {
+    unsafe {
+        if let Some(ref lista_clientes) = LISTA_CLIENTES {
+            for cliente in lista_clientes {
+                println!("{}", cliente);
+            }
+        } else {
+            println!("Lista de clientes vazia.");
         }
     }
+}
+
+fn form_cliente() -> Option<cliente_model::Cliente> {
+    ui::cadastrar_cliente();
+    let cliente: cliente_model::Cliente = cliente_model::Cliente {
+        id: regex_form(r"\d{4}", "ID (Min 4 digitos)"),
+        nome_completo: regex_form(r"^[A-Za-z\s]+$", "Nome Completo"),
+        cpf: regex_form(r"^\d{11}", "CPF (11 digitos)"),
+        civel: regex_form(r"^[A-Za-z\s]+$", "Estado Civil"),
+        cep: regex_form(r"^\d{8}", "CEP (8 digitos)"),
+        data_nascimento: regex_form(r"\d{2}\/\d{2}\/\d{4}", "Data nascimento dd/mm/yyyy"),
+    };
+
     ui::clear_screen();
-    if get_data(&cliente.data_nascimento){
+    if get_data(&cliente.data_nascimento) {
         println!("Cliente de maior");
         println!("Cliente cadastrado: \n");
-        println!("{}",cliente);
+        println!("{}", cliente);
         println!("\n\n#####################################");
+        Some(cliente)
+    } else {
+        println!("Lamento, precisa ter mais de 18 anos para se cadastrar");
+        None
     }
-    else{
-        println!("Lamento precisa ter mais de 18 anos para se cadastrar");
-    }
-
-
-    
-
 }
+
+impl fmt::Display for cliente_model::Cliente {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "ID: {}\nNome Completo: {}\nCPF: {}\nEstado Civil: {}\nCEP: {}\nData de Nascimento: {}",
+               self.id, self.nome_completo, self.cpf, self.civel, self.cep, self.data_nascimento)
+    }
+}
+
 pub fn nav_main_menu() {
     ui::main_menu();
     print!("Aguardando...\n");
 
     match tratar_input() {
-        '1' => form_cliente(),
+        '1' => register_users(),
         '2' => println!("Você escolheu a opção 2."),
         '3' => println!("Você escolheu a opção 3."),
         _ => {
@@ -104,10 +142,9 @@ pub fn nav_main_menu() {
             }
         }
     }
-    
 }
+
 pub fn get_data(_data: &str) -> bool {
-    // Função para converter a string de data em um array de u32
     fn parse_date(date_str: &str) -> Option<[u32; 3]> {
         let parts: Vec<&str> = date_str.split('/').collect();
         if parts.len() != 3 {
@@ -119,19 +156,15 @@ pub fn get_data(_data: &str) -> bool {
         Some([day, month, year])
     }
 
-    // Obter a data atual
     let now = Local::now();
     let current_year = now.year() as u32;
     let current_month = now.month();
     let current_day = now.day();
 
-    // Converter a string de data fornecida pelo usuário em um array de u32
     if let Some(data_user) = parse_date(_data) {
-        // Verificar se a diferença entre os anos é maior que 18
         if (current_year - data_user[2]) > 18 {
             true
         } else if (current_year - data_user[2]) == 18 {
-            // Se a diferença for exatamente 18 anos, verificar os meses e dias
             if current_month > data_user[1] || (current_month == data_user[1] && current_day >= data_user[0]) {
                 true
             } else {
@@ -141,7 +174,6 @@ pub fn get_data(_data: &str) -> bool {
             false
         }
     } else {
-        // Se a string de data fornecida pelo usuário for inválida, retornar false
         false
     }
 }
