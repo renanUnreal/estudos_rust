@@ -104,7 +104,6 @@ fn form_cliente() -> Option<cliente_model::Cliente> {
         cep: regex_form(r"^\d{8}", "CEP (8 digitos)"),
         data_nascimento: regex_form(r"\d{2}\/\d{2}\/\d{4}", "Data nascimento dd/mm/yyyy"),
     };
-
     ui::clear_screen();
     if get_data(&cliente.data_nascimento) {
         println!("Cliente de maior");
@@ -125,13 +124,35 @@ impl fmt::Display for cliente_model::Cliente {
     }
 }
 
+fn pesq_clientes(id : String) {
+    ui::clear_screen();
+    println!("#####################################################################");
+    unsafe {
+        if let Some(ref lista_clientes) = LISTA_CLIENTES {
+            for cliente in lista_clientes {
+                if cliente.id == id{
+                println!("{}", cliente);
+                println!("\n --------------------------------------------");
+                }
+            }
+        } else {
+            println!("Lista de clientes vazia.");
+        }
+    }
+    println!("#####################################################################");
+    println!("pressione qualquer tecla para voltar ao menu inicial...");
+    println!("Aguardando...");
+    tratar_input();
+    nav_main_menu()
+}
+
 pub fn nav_main_menu() {
     ui::main_menu();
     print!("Aguardando...\n");
 
     match tratar_input() {
         '1' => list_clientes(),
-        '2' => println!("Você escolheu a opção 2."),
+        '2' => pesq_clientes(regex_form(r"\d{4}", "digite o id de 4 digitos que deseja buscar")),
         '3' => register_users(),
         '4' => println!("Você escolheu a opção 4."),
         '5' => println!("Você escolheu a opção 5."),
