@@ -68,7 +68,6 @@ fn register_users() {
                 }
             }
         }
-        println!("#####################################################################");
         list_clientes();
         }
     } else {
@@ -76,15 +75,22 @@ fn register_users() {
     }
 }
 fn list_clientes() {
+    ui::clear_screen();
+    println!("#####################################################################");
     unsafe {
         if let Some(ref lista_clientes) = LISTA_CLIENTES {
             for cliente in lista_clientes {
                 println!("{}", cliente);
+                println!("\n --------------------------------------------")
             }
         } else {
             println!("Lista de clientes vazia.");
         }
     }
+    println!("#####################################################################");
+    println!("pressione qualquer tecla para voltar ao menu inicial...");
+    println!("Aguardando...");
+    nav_main_menu()
 }
 
 fn form_cliente() -> Option<cliente_model::Cliente> {
@@ -123,9 +129,11 @@ pub fn nav_main_menu() {
     print!("Aguardando...\n");
 
     match tratar_input() {
-        '1' => register_users(),
+        '1' => list_clientes(),
         '2' => println!("Você escolheu a opção 2."),
-        '3' => println!("Você escolheu a opção 3."),
+        '3' => register_users(),
+        '4' => println!("Você escolheu a opção 4."),
+        '5' => println!("Você escolheu a opção 5."),
         _ => {
             println!("Opção invalida, deseja tentar novamente? (s)=sim ou (n)=não");
             print!("Aguardando...\n");
