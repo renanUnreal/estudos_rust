@@ -136,7 +136,7 @@ fn pesq_clientes(id : String) {
                 }
             }
         } else {
-            println!("Lista de clientes vazia.");
+            println!("Cliente não encontrado.");
         }
     }
     println!("#####################################################################");
