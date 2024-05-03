@@ -68,8 +68,8 @@ fn register_users() {
                 }
             }
         }
-        list_clientes();
         }
+        list_clientes();
     } else {
         println!("O caractere '{}' não é um dígito válido.", input);
     }
@@ -90,6 +90,7 @@ fn list_clientes() {
     println!("#####################################################################");
     println!("pressione qualquer tecla para voltar ao menu inicial...");
     println!("Aguardando...");
+    tratar_input();
     nav_main_menu()
 }
 
