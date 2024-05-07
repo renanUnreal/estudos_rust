@@ -63,6 +63,7 @@ fn register_users() {
             if let Some(ref mut lista_clientes) = LISTA_CLIENTES {
                 if let Some(cliente) = form_cliente() {
                     lista_clientes.push(cliente);
+                    
                 } else {
                     println!("Falha ao cadastrar o cliente número {}", cliente_num);
                 }
@@ -146,6 +147,26 @@ fn pesq_clientes(id : String) {
     nav_main_menu()
 }
 
+fn delete_cliente(id: String) {
+    ui::clear_screen();
+    println!("#####################################################################");
+    unsafe {
+        if let Some(ref mut lista_clientes) = LISTA_CLIENTES {
+            // Utilizamos a função retain() para manter apenas os elementos que não correspondem ao ID fornecido
+            lista_clientes.retain(|cliente| cliente.id != id);
+            println!("Cliente removido com sucesso.");
+        } else {
+            println!("Lista de clientes não disponível.");
+        }
+    }
+    println!("#####################################################################");
+    println!("Pressione qualquer tecla para voltar ao menu inicial...");
+    println!("Aguardando...");
+    tratar_input();
+    nav_main_menu();
+}
+
+
 pub fn nav_main_menu() {
     ui::main_menu();
     print!("Aguardando...\n");
@@ -155,7 +176,7 @@ pub fn nav_main_menu() {
         '2' => pesq_clientes(regex_form(r"\d{4}", "digite o id de 4 digitos que deseja buscar")),
         '3' => register_users(),
         '4' => println!("Você escolheu a opção 4."),
-        '5' => println!("Você escolheu a opção 5."),
+        '5' => delete_cliente(regex_form(r"\d{4}", "digite o id de 4 digitos que deseja buscar")),
         _ => {
             println!("Opção invalida, deseja tentar novamente? (s)=sim ou (n)=não");
             print!("Aguardando...\n");

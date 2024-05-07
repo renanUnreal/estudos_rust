@@ -1,0 +1,237 @@
+#########################################
+querys no postgresql
+#########################################
+
+
+CREATE TABLE acessos (
+    id SERIAL PRIMARY KEY,
+    campo_char CHAR(20)
+);
+
+INSERT INTO acessos (tipo_acesso) VALUES ('v');
+{
+    v : visitantes,
+    e : expositor,
+    t : suporte tecnico,
+    m : manutenção,
+    s : segurança
+
+}
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE visitantes (
+    id SERIAL PRIMARY KEY,
+    cpf VARCHAR(11),
+    email VARCHAR(128),
+    nome_completo VARCHAR(128),
+    telefone VARCHAR(14),
+    empresa VARCHAR(128),
+    cargo VARCHAR(128),
+    acesso INT, -- assumindo que acesso é uma chave estrangeira referenciando a coluna "id" na tabela "acessos"
+    pontos INT,
+    FOREIGN KEY (acesso) REFERENCES acessos (id)
+);
+
+INSERT INTO visitantes (cpf, email, nome_completo, telefone, empresa, cargo, acesso, pontos) 
+VALUES ('12345678900', 'exemplo@email.com', 'Nome Sobrenome', '1234567890', 'Empresa ABC', 'Gerente', 1, 100);
+
+SELECT
+    u.*,
+    CASE a.tipo_acesso
+        WHEN 'v' THEN 'visitante'
+        WHEN 'e' THEN 'expositor'
+        WHEN 't' THEN 'suporte tecnico'
+        WHEN 'm' THEN 'manutenção'
+        WHEN 's' THEN 'segurança'
+        ELSE 'desconhecido'
+    END AS tipo_acesso_legivel
+FROM
+    visitantes u
+JOIN
+    acessos a ON u.acesso = a.id;
+
+
+
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE cliente (
+    id SERIAL PRIMARY KEY,
+    hash_id UUID DEFAULT uuid_generate_v4(),
+    cnpj VARCHAR(14) UNIQUE, -- Adicionando a restrição UNIQUE ao campo cnpj
+    email VARCHAR(128) UNIQUE,
+    razao_social VARCHAR(128) UNIQUE,
+    telefone VARCHAR(14)UNIQUE,
+    responsavel INT,
+    FOREIGN KEY (responsavel) REFERENCES visitantes (id)
+);
+
+
+INSERT INTO cliente (cnpj, email, razao_social, telefone, responsavel)
+VALUES ('12345678900', 'exemplo@email.com', 'Exemplo Ltda', '1234567890', 1);
+
+SELECT 
+    c.*, 
+    v.nome_completo AS nome_visitante,
+    v.telefone AS telefone_visitante
+FROM 
+    cliente c
+JOIN 
+    visitantes v ON c.responsavel = v.id
+WHERE 
+    c.id = 1;
+
+
+
+
+CREATE TABLE brindes (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(128),
+    descricao VARCHAR(255),
+    quantidade INT2,
+    id_responsavel INT, -- chave estrangeira referenciando a tabela visitantes
+    FOREIGN KEY (id_responsavel) REFERENCES visitantes (id)
+);
+
+INSERT INTO brindes (nome, descricao, quantidade, id_responsavel)
+VALUES ('Caneca Personalizada', 'Caneca de cerâmica com logo da empresa gravado', 100, 1);
+
+SELECT 
+    b.nome AS nome_brinde, 
+    b.descricao AS descricao_brinde, 
+    b.quantidade AS quantidade_brinde, 
+    v.nome_completo AS nome_responsavel, 
+    v.telefone AS telefone_responsavel
+FROM 
+    brindes b
+JOIN 
+    visitantes v ON b.id_responsavel = v.id;
+
+
+
+    CREATE TABLE ativacoes (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nome VARCHAR(128),
+    descricao VARCHAR(255),
+    participantes INT2,
+    id_responsavel INT, -- chave estrangeira referenciando a tabela visitantes
+    id_brinde INT, -- chave estrangeira referenciando a tabela brindes
+    FOREIGN KEY (id_responsavel) REFERENCES visitantes (id),
+    FOREIGN KEY (id_brinde) REFERENCES brindes (id)
+);
+
+
+INSERT INTO ativacoes (nome, descricao, participantes, id_responsavel, id_brinde)
+VALUES ('game em VR', 'Experiência de jogo imersiva em realidade virtual', 50, 1, 1);
+
+SELECT 
+    a.id,
+    a.nome AS nome_ativacao,
+    a.descricao,
+    a.participantes,
+    v.nome_completo AS nome_responsavel,
+    b.nome AS nome_brinde
+FROM 
+    ativacoes a
+JOIN 
+    visitantes v ON a.id_responsavel = 1
+JOIN 
+    brindes b ON a.id_brinde = 1;
+
+
+    CREATE TABLE stands (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(128),
+    descricao VARCHAR(255),
+    tamanho INT2,
+    id_responsavel INT, -- chave estrangeira referenciando a tabela visitantes
+    id_cliente INT, -- chave estrangeira referenciando a tabela clientes
+    id_ativacao INT, -- chave estrangeira referenciando a tabela ativacoes
+    FOREIGN KEY (id_responsavel) REFERENCES visitantes (id),
+    FOREIGN KEY (id_cliente) REFERENCES cliente (id),
+    FOREIGN KEY (id_ativacao) REFERENCES ativacoes (id)
+);
+
+SELECT 
+    s.*, 
+    v_responsavel.nome_completo AS nome_responsavel, 
+    v_responsavel.telefone AS telefone_responsavel, 
+    c.razao_social AS nome_cliente, 
+    c.telefone AS telefone_cliente, 
+    a.nome AS nome_ativacao
+FROM 
+    stands s
+JOIN 
+    visitantes v_responsavel ON s.id = v_responsavel.id
+JOIN 
+    cliente c ON s.id_cliente = c.id
+JOIN 
+    ativacoes a ON s.id_ativacao = a.id;
+
+
+
+
+
+CREATE TABLE admin (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    password_hash VARCHAR(128),
+    username VARCHAR(12),
+    id_visitante INT,
+    FOREIGN KEY (id_visitante) REFERENCES visitantes (id)
+);
+
+
+
+    -- Exemplo de inserção de administrador na tabela admin
+INSERT INTO admin (password_hash, username, id_visitante)
+VALUES ('$2b$12$2WE1O/ULeG68FJ89S6v4Huj.K4KhOa6r12RgMyx9fB.8o4Hl.1U5C', 'admin', 1);
+
+SELECT 
+    a.username AS username_admin,
+    v.nome_completo AS nome_visitante,
+    v.telefone AS telefone_visitante,
+    v.email AS email_visitante,
+    CASE ac.tipo_acesso
+        WHEN 'v' THEN 'visitante'
+        WHEN 'e' THEN 'expositor'
+        WHEN 't' THEN 'suporte tecnico'
+        WHEN 'm' THEN 'manutenção'
+        WHEN 's' THEN 'segurança'
+        ELSE 'desconhecido'
+    END AS tipo_acesso_visitante
+FROM 
+    admin a
+JOIN 
+    visitantes v ON a.id_visitante = v.id
+JOIN 
+    acessos ac ON v.acesso = ac.id;
+
+
+    CREATE TABLE checkin (
+    id SERIAL PRIMARY KEY,
+    id_visitante INT,
+    id_ativacao INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_visitante) REFERENCES visitantes (id),
+    FOREIGN KEY (id_ativacao) REFERENCES ativacoes (id)
+);
+
+
+INSERT INTO checkin (id_visitante, id_ativacao)
+VALUES (1, 1);
+
+
+SELECT 
+    v.nome_completo AS nome_visitante,
+    a.nome AS nome_ativacao,
+    s.nome AS nome_stand,
+    TO_CHAR(c.created_at, 'DD/MM/YYYY HH24:MI:SS') AS data_checkin
+FROM 
+    checkin c
+JOIN 
+    visitantes v ON c.id_visitante = v.id
+JOIN 
+    ativacoes a ON c.id_ativacao = a.id
+JOIN 
+    stands s ON a.id = s.id;
