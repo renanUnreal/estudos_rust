@@ -5,7 +5,7 @@ pub struct Visitante {
     telefone: String,
     empresa: String,
     cargo: String,
-    acesso: char,
+    acesso: i32,
     pontos: i32,
 }
 
@@ -18,7 +18,7 @@ impl Visitante {
         telefone: String,
         empresa: String,
         cargo: String,
-        acesso: char,
+        acesso: i32,
         pontos: i32,
     ) -> Self {
         Visitante {
@@ -58,7 +58,7 @@ impl Visitante {
         &self.cargo
     }
 
-    pub fn acesso(&self) -> char {
+    pub fn acesso(&self) -> i32 {
         self.acesso
     }
 
