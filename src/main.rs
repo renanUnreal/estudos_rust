@@ -1,5 +1,9 @@
 use postgres::{Client, NoTls};
 
+mod models;
+
+use models::visitante_model::Visitante;
+
 // Função para estabelecer a conexão com o banco de dados
 fn conn() -> Result<Client, postgres::Error> {
     // Altere as informações de conexão conforme necessário
@@ -34,15 +38,35 @@ for row in client.query("SELECT * FROM visitantes", &[])? {
     println!("\n\nid: {}\n cpf: {}\n email: {}\n Nome completo: {}\n telefone: {}\n empresa: {}\n cargo: {}\n acesso: {}\n pontos: {}\n\n", 
             column1, column2, column3, column4, column5, column6, column7, column8, column9);
 }
-
     // Retorna Ok(()) se a operação for bem-sucedida
     Ok(())
 }
 
 fn main() {
     // Chama a função para executar a consulta SELECT
-    match select_from_table() {
-        Ok(_) => println!("Consulta executada com sucesso!"),
-        Err(err) => eprintln!("Erro ao executar a consulta: {}", err),
-    }
+    //match select_from_table() {
+   //     Ok(_) => println!("Consulta executada com sucesso!"),
+  //      Err(err) => eprintln!("Erro ao executar a consulta: {}", err),
+  //  }
+
+     // Exemplo de uso da struct Visitante
+     let visitante = Visitante::new(
+        "123.456.789-00".to_string(),
+        "joao@example.com".to_string(),
+        "João da Silva".to_string(),
+        "(11) 99999-9999".to_string(),
+        "Empresa X".to_string(),
+        "Analista".to_string(),
+        'v',
+        100,
+    );
+
+    println!("CPF: {}", visitante.cpf());
+    println!("Email: {}", visitante.email());
+    println!("Nome Completo: {}", visitante.nome_completo());
+    println!("Telefone: {}", visitante.telefone());
+    println!("Empresa: {}", visitante.empresa());
+    println!("Cargo: {}", visitante.cargo());
+    println!("Acesso: {}", visitante.acesso());
+    println!("Pontos: {}", visitante.pontos());
 }
