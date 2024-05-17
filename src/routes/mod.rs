@@ -1,3 +1,9 @@
 pub mod routes;
 pub mod root;
 pub mod visitantes;
+pub mod clientes;
+pub mod stands;
+pub mod ativacoes;
+pub mod brindes;
+pub mod checkin;
+pub mod adm;

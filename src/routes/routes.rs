@@ -1,6 +1,12 @@
 use actix_web::web;
 
 use super::visitantes::{create,index_all, index_by_id, delete, update};
+use super::stands::{stands_create, stands_delete, stands_index_all,stands_index_by_id, stands_update};
+use super::clientes::{clientes_create, clientes_delete, clientes_index_all,clientes_index_by_id,clientes_update};
+use super::checkin::{checkin_create,checkin_index_all,checkin_index_by_id};
+use super::brindes::{brindes_create, brindes_delete, brindes_index_all,brindes_index_by_id,brindes_update};
+use super::ativacoes::{ativacoes_create, ativacoes_delete, ativacoes_index_all, ativacoes_index_by_id, ativacoes_update};
+use super::adm::{adm_create, adm_delete, adm_index_all, adm_index_by_id, adm_update};
 use super::root::index;
 
 
@@ -32,120 +38,120 @@ pub fn config(cfg: &mut web::ServiceConfig) {
     ////////////////////////////////////////////////////////////////////////////////////
     .service(
         web::resource("/clientes/all/{pg}")
-            .route(web::get().to(index_all))
+            .route(web::get().to(clientes_index_all))
     )
     .service(
         web::resource("/clientes/{id}")
-            .route(web::get().to(index_by_id))
+            .route(web::get().to(clientes_index_by_id))
     )
     .service(
         web::resource("/clientes/new")
-            .route(web::post().to(create))
+            .route(web::post().to(clientes_create))
     )
     .service(
         web::resource("/clientes/delete/{id}")
-            .route(web::delete().to(delete))
+            .route(web::delete().to(clientes_delete))
     )
     .service(
         web::resource("/clientes/update/{id}")
-            .route(web::put().to(update))
+            .route(web::put().to(clientes_update))
     )
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     .service(
         web::resource("/stands/all/{pg}")
-            .route(web::get().to(index_all))
+            .route(web::get().to(stands_index_all))
     )
     .service(
         web::resource("/stands/{id}")
-            .route(web::get().to(index_by_id))
+            .route(web::get().to(stands_index_by_id))
     )
     .service(
         web::resource("/stands/new")
-            .route(web::post().to(create))
+            .route(web::post().to(stands_create))
     )
     .service(
         web::resource("/stands/delete/{id}")
-            .route(web::delete().to(delete))
+            .route(web::delete().to(stands_delete))
     )
     .service(
         web::resource("/stands/update/{id}")
-            .route(web::put().to(update))
+            .route(web::put().to(stands_update))
     )
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     .service(
         web::resource("/ativacoes/all/{pg}")
-            .route(web::get().to(index_all))
+            .route(web::get().to(ativacoes_index_all))
     )
     .service(
         web::resource("/ativacoes/{id}")
-            .route(web::get().to(index_by_id))
+            .route(web::get().to(ativacoes_index_by_id))
     )
     .service(
         web::resource("/ativacoes/new")
-            .route(web::post().to(create))
+            .route(web::post().to(ativacoes_create))
     )
     .service(
         web::resource("/ativacoes/delete/{id}")
-            .route(web::delete().to(delete))
+            .route(web::delete().to(ativacoes_delete))
     )
     .service(
         web::resource("/ativacoes/update/{id}")
-            .route(web::put().to(update))
+            .route(web::put().to(ativacoes_update))
     )
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     .service(
         web::resource("/brindes/all/{pg}")
-            .route(web::get().to(index_all))
+            .route(web::get().to(brindes_index_all))
     )
     .service(
         web::resource("/brindes/{id}")
-            .route(web::get().to(index_by_id))
+            .route(web::get().to(brindes_index_by_id))
     )
     .service(
         web::resource("/brindes/new")
-            .route(web::post().to(create))
+            .route(web::post().to(brindes_create))
     )
     .service(
         web::resource("/brindes/delete/{id}")
-            .route(web::delete().to(delete))
+            .route(web::delete().to(brindes_delete))
     )
     .service(
         web::resource("/brindes/update/{id}")
-            .route(web::put().to(update))
+            .route(web::put().to(brindes_update))
     )
     //////////////////////////////////////////////////////////////////////////////////////////////////////////
     .service(
         web::resource("/checkin/all/{pg}")
-            .route(web::get().to(index_all))
+            .route(web::get().to(checkin_index_all))
     )
     .service(
         web::resource("/checkin/{id}")
-            .route(web::get().to(index_by_id))
+            .route(web::get().to(checkin_index_by_id))
     )
     .service(
         web::resource("/checkin/new")
-            .route(web::post().to(create))
+            .route(web::post().to(checkin_create))
     )
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     .service(
         web::resource("/adm/all/{pg}")
-            .route(web::get().to(index_all))
+            .route(web::get().to(adm_index_all))
     )
     .service(
         web::resource("/adm/{id}")
-            .route(web::get().to(index_by_id))
+            .route(web::get().to(adm_index_by_id))
     )
     .service(
         web::resource("/adm/new")
-            .route(web::post().to(create))
+            .route(web::post().to(adm_create))
     )
     .service(
         web::resource("/adm/delete/{id}")
-            .route(web::delete().to(delete))
+            .route(web::delete().to(adm_delete))
     )
     .service(
         web::resource("/adm/update/{id}")
-            .route(web::put().to(update))
+            .route(web::put().to(adm_update))
     );
 }
 
