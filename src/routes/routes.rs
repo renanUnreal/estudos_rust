@@ -10,7 +10,7 @@ pub fn config(cfg: &mut web::ServiceConfig) {
             .route(web::get().to(index))
     )
     .service(
-        web::resource("/visitantes/all")
+        web::resource("/visitantes/all/{pg}")
             .route(web::get().to(index_all))
     )
     .service(
@@ -27,6 +27,124 @@ pub fn config(cfg: &mut web::ServiceConfig) {
     )
     .service(
         web::resource("/visitantes/update/{id}")
+            .route(web::put().to(update))
+    )
+    ////////////////////////////////////////////////////////////////////////////////////
+    .service(
+        web::resource("/clientes/all/{pg}")
+            .route(web::get().to(index_all))
+    )
+    .service(
+        web::resource("/clientes/{id}")
+            .route(web::get().to(index_by_id))
+    )
+    .service(
+        web::resource("/clientes/new")
+            .route(web::post().to(create))
+    )
+    .service(
+        web::resource("/clientes/delete/{id}")
+            .route(web::delete().to(delete))
+    )
+    .service(
+        web::resource("/clientes/update/{id}")
+            .route(web::put().to(update))
+    )
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    .service(
+        web::resource("/stands/all/{pg}")
+            .route(web::get().to(index_all))
+    )
+    .service(
+        web::resource("/stands/{id}")
+            .route(web::get().to(index_by_id))
+    )
+    .service(
+        web::resource("/stands/new")
+            .route(web::post().to(create))
+    )
+    .service(
+        web::resource("/stands/delete/{id}")
+            .route(web::delete().to(delete))
+    )
+    .service(
+        web::resource("/stands/update/{id}")
+            .route(web::put().to(update))
+    )
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    .service(
+        web::resource("/ativacoes/all/{pg}")
+            .route(web::get().to(index_all))
+    )
+    .service(
+        web::resource("/ativacoes/{id}")
+            .route(web::get().to(index_by_id))
+    )
+    .service(
+        web::resource("/ativacoes/new")
+            .route(web::post().to(create))
+    )
+    .service(
+        web::resource("/ativacoes/delete/{id}")
+            .route(web::delete().to(delete))
+    )
+    .service(
+        web::resource("/ativacoes/update/{id}")
+            .route(web::put().to(update))
+    )
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+    .service(
+        web::resource("/brindes/all/{pg}")
+            .route(web::get().to(index_all))
+    )
+    .service(
+        web::resource("/brindes/{id}")
+            .route(web::get().to(index_by_id))
+    )
+    .service(
+        web::resource("/brindes/new")
+            .route(web::post().to(create))
+    )
+    .service(
+        web::resource("/brindes/delete/{id}")
+            .route(web::delete().to(delete))
+    )
+    .service(
+        web::resource("/brindes/update/{id}")
+            .route(web::put().to(update))
+    )
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    .service(
+        web::resource("/checkin/all/{pg}")
+            .route(web::get().to(index_all))
+    )
+    .service(
+        web::resource("/checkin/{id}")
+            .route(web::get().to(index_by_id))
+    )
+    .service(
+        web::resource("/checkin/new")
+            .route(web::post().to(create))
+    )
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    .service(
+        web::resource("/adm/all/{pg}")
+            .route(web::get().to(index_all))
+    )
+    .service(
+        web::resource("/adm/{id}")
+            .route(web::get().to(index_by_id))
+    )
+    .service(
+        web::resource("/adm/new")
+            .route(web::post().to(create))
+    )
+    .service(
+        web::resource("/adm/delete/{id}")
+            .route(web::delete().to(delete))
+    )
+    .service(
+        web::resource("/adm/update/{id}")
             .route(web::put().to(update))
     );
 }
